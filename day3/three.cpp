@@ -71,8 +71,8 @@ class Segment
 void convert_to_vector(vector<string> &outputs, string content);
 void convert_to_segments(vector<string> &outputs, std::vector<Segment> &wires, int initial[]);
 bool check_in_between(int num, int bound1, int bound2);
-int calc_distance(int x, int y);
-
+int calc_distance(int x, int y, int w, int z);
+int num_steps(int i, vector<Segment> wire, int stopx, int stopy);
 int main()
 {
     //step one parse the input
@@ -102,10 +102,12 @@ int main()
     convert_to_segments(outputs2, wireB, initial);
     
     int distance = INT_MAX;
-    for(Segment s: wireA)
+    for(int i = 0; i < wireA.size(); i ++)
     {
-        for(Segment m: wireB)
+        Segment s = wireA.at(i);
+        for(int j = 0; j < wireB.size(); j ++)
         {
+            Segment m = wireB.at(j);
             int * marrstart = m.getStart();
             int * marrend = m.getEnd();
             int mxstart = *(marrstart + 0);
@@ -124,29 +126,29 @@ int main()
             {
                 if(check_in_between(mxstart, sxstart, sxend) && check_in_between(systart,mystart, myend))
                 {
-
+                    //we've got intersections here
+                     
                     if(mxstart != 1 && systart != 1){
-                        int dist = calc_distance(mxstart, systart);
-                        cout << mxstart << " " << systart << endl;
+                        int dist = num_steps(i, wireA, mxstart, systart) + num_steps(j, wireB, mxstart,systart);
+                        // cout << mxstart << " " << systart << endl;
                         if(dist < distance)
                         {
                             distance = dist;
                         }
+                        
                     }
                     
                 }
-                
-
             }
             if((s.type == 'U' || s.type == 'D') && (m.type == 'L' || m.type == 'R'))
             {
 
                 if(check_in_between(sxstart, mxstart, mxend) && check_in_between(mystart, systart, syend))
                 {
-
+                    //we've got intersections here, need to calculate steps instead of distance now
                     if(sxstart != 1 && mystart != 1){
-                        int dist = calc_distance(sxstart, mystart);
-                        cout << sxstart << " " << mystart << endl;
+                        int dist = num_steps(i, wireA, sxstart, mystart) + num_steps(j, wireB, sxstart,mystart);
+                        // cout << mxstart << " " << systart << endl;
                         if(dist < distance)
                         {
                             distance = dist;
@@ -190,9 +192,34 @@ void convert_to_segments(vector<string> &outputs, std::vector<Segment> &wires, i
      
     }
 }
-int calc_distance(int x, int y)
+int num_steps(int i, vector<Segment> wire, int stopx, int stopy)
 {
-    return (abs((x-1)) + abs(y-1));
+    int sum = 0;
+    for(int j = 1; j <= i; j ++)
+    {
+        Segment seg = wire.at(j);
+        int * segx = seg.getStart();
+        int x = *(segx + 0);
+        int y = *(segx + 1);
+        Segment prev = wire.at(j-1);
+        int * segprev = prev.getStart();
+        int xprev = *(segprev + 0);
+        int yprev = *(segprev + 1);
+
+        int dist = calc_distance(x,y,xprev, yprev);
+        sum += dist;
+        if(j == i)
+        {
+            int toAdd = calc_distance(stopx,stopy, x, y);
+            sum+=toAdd;
+        }
+
+    }
+    return sum;
+}
+int calc_distance(int x, int y, int w, int z)
+{
+    return (abs((x-w)) + abs(y-z));
 }
 bool check_in_between(int num, int bound1, int bound2)
 {
