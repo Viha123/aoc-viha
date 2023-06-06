@@ -44,8 +44,8 @@ int computer(int array[],int size)
     
     while(array[opcode]!=99)
     {
-        if(array[opcode+3]<size)
-        {
+        // if(array[opcode+3]<size)
+        // {
             if(array[opcode] == 1)
             {
                 array[array[opcode+3]] = array[array[opcode+1]] + array[array[opcode+2]];
@@ -56,7 +56,7 @@ int computer(int array[],int size)
                 array[array[opcode+3]] = array[array[opcode+1]] * array[array[opcode+2]];
             }
             opcode+=4;
-        }
+        // }
     
     }
     return array[0];
