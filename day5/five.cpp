@@ -9,7 +9,7 @@
 #include <stdlib.h>
 
 void convert_to_vector(std::vector<int> &outputs, std::string content);
-int interpret(int opcode, int param, int array[]);
+int interpret(int ip, int param, int array[]);
 void computer(int array[],int size);
 int main()
 {
@@ -42,44 +42,33 @@ void convert_to_vector(std::vector<int> &outputs, std::string content)
 }
 void computer(int array[],int size)
 {    
-    int opcode = 0; //+= 1 untill 99
+    int ip = 0; //+= 1 untill 99
     int mode = 0; //if mode = 0, then position mode, if mode = 1 then immediate mode
     
-    while(array[opcode]!=99)
+    while(array[ip]!=99)
     {
-        //array[opcode] is a max 5 digit number which needs to be parsed to be 3 digit position par and 2 digit opcode
-        int op = array[opcode]%100;
-        int params = array[opcode]/100;
-        int param1 = params%10;
-        int param2 = (params/10)%10;
-        int param3 = (params/100);
+        //array[ip] is a max 5 digit number which needs to be parsed to be 3 digit position par and 2 digit ip
+        int op = array[ip]%100;
+        int x = array[ip];
     
         if(op== 1)
         {
-            if(param3 ==0)
-            {
-                array[array[opcode+3]] = interpret(opcode+1, param1, array) + interpret(opcode+2, param2, array);
-            
-            }
-            else{
-                array[opcode+3] = interpret(opcode+1, param1, array) + interpret(opcode+2, param2, array);
-            }
+            int p1 = interpret(ip+1, (x/100)%10, array);
+            int p2 = interpret(ip+2, (x/1000)%10, array);
 
-            opcode+=4;
+            int p3 = interpret(ip+3,(x/10000)%10, array);
+            array[p3] = array[p1] + array[p2];
+            ip+=4;
 
         }
         else if(op == 2)
         {
-            if(param3 ==0)
-            {
-                array[array[opcode+3]] = interpret(opcode+1, param1, array) * interpret(opcode+2, param2, array);
-            
-            }
-            else{
-                array[opcode+3] = interpret(opcode+1, param1, array) * interpret(opcode+2, param2, array);
-            }
+            int p1 = interpret(ip+1, (x/100)%10, array);
+            int p2 = interpret(ip+2, (x/1000)%10, array);
 
-            opcode+=4;
+            int p3 = interpret(ip+3,(x/10000)%10, array);
+            array[p3] = array[p1] * array[p2];
+            ip+=4;
 
         }
         
@@ -87,34 +76,68 @@ void computer(int array[],int size)
         {
             int inputPosition;
             std::cin >> inputPosition;
-            if(param1==0)
-            {
-                array[array[opcode+1]] = inputPosition;
-
-            }
-            else{
-                array[opcode+1] = inputPosition;
-            }
-            opcode += 2;
+            int p1 = interpret(ip+1, (x/100)%10, array);
+            array[p1] = inputPosition;
+            ip += 2;
         }
         else if(op==4)
         {
-            int output = interpret(opcode+1, param1, array); //parameter
+            int output = array[interpret(ip+1,(x/100)%10, array)]; //parameter
             std::cout << output << std::endl;
-            opcode+=2;
+            ip+=2;
+        }
+
+        else if(op == 5)
+        {
+            if(array[interpret(ip+1,(x/100)%10, array)]!= 0)
+            {
+                ip = array[interpret(ip+2,(x/1000)%10,array)];
+            }
+            else
+            {
+                ip+=3;
+            }
+        }
+        else if(op == 6)
+        {
+            if(array[interpret(ip+1, (x/100)%10, array)] == 0)
+            {
+                ip = array[interpret(ip+2,(x/1000)%10,array)];
+            }
+            else{
+                ip+=3;
+            }
+        }
+        else if(op == 7)
+        {
+            int p1 = interpret(ip+1, (x/100)%10, array);
+            int p2 = interpret(ip+2, (x/1000)%10, array);
+            int p3 = interpret(ip+3, (x/10000)%10, array);
+            
+            array[p3] = array[p1] < array[p2];
+            ip+=4;
+        }
+        else if(op ==8)
+        {
+            int p1 = interpret(ip+1, (x/100)%10, array);
+            int p2 = interpret(ip+2, (x/1000)%10, array);
+            int p3 = interpret(ip+3, (x/10000)%10, array);
+            
+            array[p3] = array[p1] == array[p2];
+            ip+=4;
         }
     
     }
     
 }
-int interpret(int opcode, int param, int array[])
+int interpret(int ip, int param, int array[])
 {
     if(param == 0)
     {
-        return array[array[opcode]];
+        return array[ip];
     }
     else
     {
-        return array[opcode];
+        return ip;
     }
 }
