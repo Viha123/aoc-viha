@@ -50,23 +50,20 @@ void computer(int array[],int size)
         //array[ip] is a max 5 digit number which needs to be parsed to be 3 digit position par and 2 digit ip
         int op = array[ip]%100;
         int x = array[ip];
+        int p1 = interpret(ip+1, (x/100)%10, array);
+        int p2 = interpret(ip+2, (x/1000)%10, array);
+        int p3 = interpret(ip+3, (x/10000)%10, array);
     
         if(op== 1)
         {
-            int p1 = interpret(ip+1, (x/100)%10, array);
-            int p2 = interpret(ip+2, (x/1000)%10, array);
-
-            int p3 = interpret(ip+3,(x/10000)%10, array);
+            
             array[p3] = array[p1] + array[p2];
             ip+=4;
 
         }
         else if(op == 2)
         {
-            int p1 = interpret(ip+1, (x/100)%10, array);
-            int p2 = interpret(ip+2, (x/1000)%10, array);
-
-            int p3 = interpret(ip+3,(x/10000)%10, array);
+           
             array[p3] = array[p1] * array[p2];
             ip+=4;
 
@@ -76,22 +73,21 @@ void computer(int array[],int size)
         {
             int inputPosition;
             std::cin >> inputPosition;
-            int p1 = interpret(ip+1, (x/100)%10, array);
             array[p1] = inputPosition;
             ip += 2;
         }
         else if(op==4)
         {
-            int output = array[interpret(ip+1,(x/100)%10, array)]; //parameter
+            int output = array[p1]; //parameter
             std::cout << output << std::endl;
             ip+=2;
         }
 
         else if(op == 5)
         {
-            if(array[interpret(ip+1,(x/100)%10, array)]!= 0)
+            if(array[p1]!= 0)
             {
-                ip = array[interpret(ip+2,(x/1000)%10,array)];
+                ip = array[p2];
             }
             else
             {
@@ -100,9 +96,9 @@ void computer(int array[],int size)
         }
         else if(op == 6)
         {
-            if(array[interpret(ip+1, (x/100)%10, array)] == 0)
+            if(array[p1] == 0)
             {
-                ip = array[interpret(ip+2,(x/1000)%10,array)];
+                ip = array[p2];
             }
             else{
                 ip+=3;
@@ -110,18 +106,13 @@ void computer(int array[],int size)
         }
         else if(op == 7)
         {
-            int p1 = interpret(ip+1, (x/100)%10, array);
-            int p2 = interpret(ip+2, (x/1000)%10, array);
-            int p3 = interpret(ip+3, (x/10000)%10, array);
+            
             
             array[p3] = array[p1] < array[p2];
             ip+=4;
         }
         else if(op ==8)
         {
-            int p1 = interpret(ip+1, (x/100)%10, array);
-            int p2 = interpret(ip+2, (x/1000)%10, array);
-            int p3 = interpret(ip+3, (x/10000)%10, array);
             
             array[p3] = array[p1] == array[p2];
             ip+=4;
