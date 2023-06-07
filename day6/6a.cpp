@@ -2,6 +2,8 @@
 #include <fstream>
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
+#include <limits.h>
 
 using namespace std;
 class Node 
@@ -32,8 +34,7 @@ class Node
 int main()
 {
     
-    // std::unordered_set<Node, Node::node_hash> node_set;
-
+    //
     fstream data("six.txt");
     int pl = 3;// planet lenght, change to 3 later
     unordered_map<Node, Node, Node::node_hash> map;
@@ -69,5 +70,41 @@ int main()
         }
         sum += c;
     }
-    cout << sum << endl;
+    cout << "All direct and indirect orbits: " << sum << endl;
+
+    unordered_set<Node, Node::node_hash> node_set;
+
+    //add all nodes that associate with YOU
+    Node you("YOU");
+    int l = 0;
+    
+    while(map.count(you)!=0)
+    {
+        you = map.find(you)->second;
+        l++;
+        you.setLength(l);
+        node_set.insert(you);
+    }
+    //PART B
+    Node sam("SAN");
+    int s = 0;
+    int transfer = INT_MAX;
+    while(map.count(sam)!=0)
+    {
+        
+        sam = map.find(sam)->second;
+        s++;
+        sam.setLength(s);
+        if(node_set.count(sam))
+        {
+            auto y = node_set.find(sam);
+            int ylen = y->length;
+            if(transfer > (ylen + sam.length-2))
+            {
+                transfer = ylen+sam.length -2; //account for ob1 errors in both
+            }
+            
+        }
+    }
+    cout << transfer << endl;
 }
