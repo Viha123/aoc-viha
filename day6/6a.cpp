@@ -4,7 +4,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <limits.h>
-
+#include <chrono>
 using namespace std;
 class Node 
 {
@@ -21,7 +21,7 @@ class Node
             length = len;
         }
         bool operator==(const Node& other) const
-        {
+        { 
             if (this->name == other.name) return true;
             else return false;
         }
@@ -34,7 +34,7 @@ class Node
 int main()
 {
     
-    //
+    auto start = chrono::high_resolution_clock::now();
     fstream data("six.txt");
     int pl = 3;// planet lenght, change to 3 later
     unordered_map<Node, Node, Node::node_hash> map;
@@ -56,21 +56,32 @@ int main()
             
         }
     }
+    // int sum = 0;
+    // for(auto i: map)
+    // {
+    //     // cout << i.first.name << " orbits " << i.second.name << endl;
+    //     //i.second is next
+    //     Node current = i.second;
+    //     int c = 1;
+    //     while(map.count(current) != 0)
+    //     {
+    //         c++;
+    //         current = map.find(current)->second;
+    //     }
+    //     sum += c;
+    // }
+    // cout << "All direct and indirect orbits: " << sum << endl;
     int sum = 0;
-    for(auto i: map)
+    for(auto [key, value]: map)
     {
-        // cout << i.first.name << " orbits " << i.second.name << endl;
-        //i.second is next
-        Node current = i.second;
+        Node current = value;
         int c = 1;
-        while(map.count(current) != 0)
-        {
+        while(map.count(current)!=0){
             c++;
             current = map.find(current)->second;
         }
-        sum += c;
+        sum+=c;
     }
-    cout << "All direct and indirect orbits: " << sum << endl;
 
     unordered_set<Node, Node::node_hash> node_set;
 
@@ -107,4 +118,9 @@ int main()
         }
     }
     cout << transfer << endl;
+    auto stop = chrono::high_resolution_clock::now();
+
+    auto duration = chrono::duration_cast<chrono::milliseconds>(stop-start);
+    cout << duration.count() << endl;
+
 }
