@@ -11,7 +11,7 @@
 #define N 3
 void convert_to_vector(std::vector<int> &outputs, std::string content);
 int interpret(int ip, int param, int array[]);
-int computer(int array[],int size);
+int computer(int array[],int size, int in1, int in2);
 void dfs(std::unordered_set<int> hset, std::vector<std::vector<int>>& combinations,std::vector<int> vec);
 int main()
 {
@@ -31,14 +31,21 @@ int main()
     std::unordered_set<int> hset = {0,1,2,3,4}; //this will be passed into every dfs func
     std::vector<std::vector<int>> combinations;
     std::vector<int> vec; //this will be appended into combinations 
-    // computer(code, size);[
+    //computer(code, size); //first phase setting then initial input = 0
     dfs(hset, combinations,vec);
-    // for(auto outer: combinations){
-    //     for(int inner: outer){
-    //         std::cout << inner << " ";
-    //     }
-    //     std::cout << std::endl;
-    // }
+    int max = INT_MIN;
+    for(auto outer: combinations){
+        int initial = 0;
+        for(int i = 0; i < outer.size(); i ++){
+            int phase = outer[i];
+            initial = computer(code,size,phase,initial);
+        }
+        if(initial > max){
+            max = initial;
+        }
+    }
+    std::cout<< max << std::endl;
+
 
     
 }
@@ -70,11 +77,12 @@ void convert_to_vector(std::vector<int> &outputs, std::string content)
         outputs.push_back(num);
     }
 }
-int computer(int array[],int size)
+int computer(int array[],int size, int in1, int in2)
 {    
     int ip = 0; //+= 1 untill 99
     int mode = 0; //if mode = 0, then position mode, if mode = 1 then immediate mode
     int output;
+    bool secondIn = false;
     while(array[ip]!=99)
     {
         //array[ip] is a max 5 digit number which needs to be parsed to be 3 digit position par and 2 digit ip
@@ -101,15 +109,23 @@ int computer(int array[],int size)
         
         else if(op == 3)
         {
-            int inputPosition;
-            std::cin >> inputPosition;
-            array[p1] = inputPosition;
-            ip += 2;
+            // int inputPosition;
+            // std::cin >> inputPosition;
+            // array[p1] = inputPosition;
+            // ip += 2;
+            if(!secondIn){
+                array[p1] = in1;
+                secondIn = true;
+            }
+            else{
+                array[p1] = in2;
+            }
+            ip+=2;
         }
         else if(op==4)
         {
             output = array[p1]; //parameter
-            std::cout << output << std::endl;
+            // std::cout << output << std::endl;
             ip+=2;
         }
 
