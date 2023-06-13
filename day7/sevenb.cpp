@@ -12,7 +12,7 @@
 void convert_to_vector(std::vector<int> &outputs, std::string content);
 int interpret(int ip, int param, int array[]);
 int computer(int array[],int size, int in1, int in2, int &ip, bool phaseTrue);
-void dfs(std::unordered_set<int> hset, std::vector<std::vector<int>>& combinations,std::vector<int> vec);
+void permute(std::unordered_set<int> hset, std::vector<std::vector<int>>& combinations,std::vector<int> vec);
 int main()
 {
     std::fstream data("seven.txt");
@@ -23,8 +23,6 @@ int main()
     int size = input.size();
     int code[size];
     int holder[size];
-
-    
     for(int i = 0; i < size; i ++)
     {
         code[i] = input.at(i);
@@ -32,24 +30,13 @@ int main()
     }
     //we have value in code
     //find all combinations of 5 [0,0,0,0,0] //perhaps 2d array
-    std::unordered_set<int> hset = {5,6,7,8,9}; //this will be passed into every dfs func
+    std::unordered_set<int> hset = {5,6,7,8,9}; //this will be passed into every permute func
     std::vector<std::vector<int>> combinations;
     std::vector<int> vec; //this will be appended into combinations 
     //computer(code, size); //first phase setting then initial input = 0
-    dfs(hset, combinations,vec);
+    permute(hset, combinations,vec);
     int max = INT_MIN;
     std::vector<int> ips = {0,0,0,0,0}; //keep track of instruction pointers to resume where started
-
-    // for(auto outer: combinations){
-    //     int initial = 0;
-    //     for(int i = 0; i < outer.size(); i ++){
-    //         int phase = outer[i];
-    //         initial = computer(code,size,phase,initial);
-    //     }
-    //     if(initial > max){
-    //         max = initial;
-    //     }
-    // }
     std::vector<int> test={9,8,7,6,5};
     int initial = 0;
     for(int i = 0; i < test.size(); i ++){
@@ -57,13 +44,13 @@ int main()
         initial = computer(code,size,phase,initial, ips[i], true);
     
     }
+    std::cout << initial << std:: endl;
     while(code[ips[4]]!=99){
         //now output of E must go into A and not the phase settings
         //initial = output[E]
         for(int i = 0; i < test.size(); i ++){
             int phase = test[i];
             initial = computer(code,size,phase,initial, ips[i], false);
-
         }
     } 
     //do while compE[ip] != 99 //does not hault
@@ -78,34 +65,8 @@ int main()
 
     
 }
-//gonna have 5! different non repeating  combinations. need to use dfs/backtracking to sovle problem
-void dfs(std::unordered_set<int> hset, std::vector<std::vector<int>>& combinations,std::vector<int> vec){
-    //base case
-    if(hset.size() == 0){
-        //append vector to combinations
-        combinations.push_back(vec);
-        return;
-    }
-    for(auto element: hset){
-        std::vector<int> v2 = vec;
-        std::unordered_set<int> set2 = hset;
-        v2.push_back(element);
-        set2.erase(element);
-        dfs(set2,combinations,v2);
-    }
-}
+//gonna have 5! different non repeating  combinations. need to use permute/backtracking to sovle problem
 
-void convert_to_vector(std::vector<int> &outputs, std::string content)
-{
-    std::stringstream ss1(content);
-    while (ss1.good())
-    {
-        std::string substr;
-        std::getline(ss1, substr, ',');
-        int num = stoi(substr);
-        outputs.push_back(num);
-    }
-}
 int computer(int array[],int size, int in1, int in2, int &ip, bool phaseTrue)
 {    
     int mode = 0; //if mode = 0, then position mode, if mode = 1 then immediate mode
@@ -137,10 +98,6 @@ int computer(int array[],int size, int in1, int in2, int &ip, bool phaseTrue)
         
         else if(op == 3)
         {
-            // int inputPosition;
-            // std::cin >> inputPosition;
-            // array[p1] = inputPosition;
-            // ip += 2;
             if(phaseTrue){
                 if(!secondIn){
                     array[p1] = in1;
@@ -212,5 +169,33 @@ int interpret(int ip, int param, int array[])
     else
     {
         return ip;
+    }
+}
+
+void permute(std::unordered_set<int> hset, std::vector<std::vector<int>>& combinations,std::vector<int> vec){
+    //base case
+    if(hset.size() == 0){
+        //append vector to combinations
+        combinations.push_back(vec);
+        return;
+    }
+    for(auto element: hset){
+        std::vector<int> v2 = vec;
+        std::unordered_set<int> set2 = hset;
+        v2.push_back(element);
+        set2.erase(element);
+        permute(set2,combinations,v2);
+    }
+}
+
+void convert_to_vector(std::vector<int> &outputs, std::string content)
+{
+    std::stringstream ss1(content);
+    while (ss1.good())
+    {
+        std::string substr;
+        std::getline(ss1, substr, ',');
+        int num = stoi(substr);
+        outputs.push_back(num);
     }
 }
