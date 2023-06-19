@@ -39,26 +39,20 @@ int main()
     std::vector<int> ips = {0,0,0,0,0}; //keep track of instruction pointers to resume where started
     std::vector<int> test={9,8,7,6,5};
     int initial = 0;
-    for(int i = 0; i < test.size(); i ++){
-        int phase = test[i];
-        initial = computer(code,size,phase,initial, ips[i], true);
+    // for(int i = 0; i < test.size(); i ++){ //phase mode
+    //     int phase = test[i];
+    //     initial = computer(code,size,phase,initial, ips[i], true);
     
-    }
+    // }
     std::cout << initial << std:: endl;
-    while(code[ips[4]]!=99){
+    while(code[ips[4]]!=99){ //while 5th system is not halted
         //now output of E must go into A and not the phase settings
         //initial = output[E]
         for(int i = 0; i < test.size(); i ++){
             int phase = test[i];
-            initial = computer(code,size,phase,initial, ips[i], false);
+            initial = computer(code,size,phase,initial, ips[i], false); //idea is to remember references of ip
         }
     } 
-    //do while compE[ip] != 99 //does not hault
-    //INI
-    // for(int i = 0; i < test.size(); i ++){
-    //     int phase = test[i];
-    //     initial = computer(code,size,phase,initial);
-    // }
     
     std::cout<< max << std::endl;
 
