@@ -9,14 +9,16 @@
 #include <stdlib.h>
 #include <unordered_set>
 #define N 3
-class IntcodeComputer{
+class AmplifierProgram{
     public:
-        IntcodeComputer(const std::vector<int>& program){ //takes in the "program/code" can continue to be vector
+        AmplifierProgram(const std::vector<int>& program){ //takes in the "program/code" can continue to be vector
             this->initial_program = program;
             this->program = program;
         }
         void reset(){
             program = initial_program; 
+            complete = true;
+            ip = 0;
         }
         int interpret(int ip, int param)
         {
@@ -113,6 +115,8 @@ class IntcodeComputer{
     private:
         std::vector<int> program;
         std::vector<int> initial_program;
+        bool complete = false;
+        int ip = 0;
 };
 
 //gonna have 5! different non repeating  combinations. need to use dfs/backtracking to sovle problem
@@ -148,6 +152,7 @@ int test_amplifier_configuration(IntcodeComputer& computer, std::vector<int>& ph
     for(int i = 0; i < phase_setting.size(); i ++){
         int phase = phase_setting[i];
         initial = computer.compute(std::vector<int>{phase_setting[i], initial});
+        computer.reset();
     }
     return initial;
 }
@@ -177,5 +182,10 @@ int main()
     std::cout<< max << std::endl;
 
 
+    //PART B
+
+    //
+
     
 }
+
