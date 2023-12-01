@@ -1,42 +1,55 @@
 #include <iostream>
-#include <fstream>
 #include <string>
-#include <map>
 #include <vector>
+#include <cmath>
+#include <fstream>
+#include <cstdio>
+#include <array>
+#include <algorithm>
+
+#include <map>
 std::map<std::string, std::string> numbers = {
-    {"two", "2"}, 
-    {"one", "1"}, 
-    {"three", "3"}, 
-    {"four", "4"}, 
-    {"five", "5"}, 
-    {"six", "6"}, 
-    {"seven", "7"}, 
-    {"eight", "8"}, 
+    {"two", "2"},
+    {"one", "1"},
+    {"three", "3"},
+    {"four", "4"},
+    {"five", "5"},
+    {"six", "6"},
+    {"seven", "7"},
+    {"eight", "8"},
     {"nine", "9"}};
 
-std::vector<std::string> strings = {"two", "one", "three", "four", "five", "six", "seven", "eight", "nine"};
-std::string numberfromstring(std::string fiveletterword)
+std::vector<std::string> strings = {"eight", "two", "one", "three", "four", "five", "six", "seven", "nine"};
+
+
+char numberfromstring(std::string fiveletterword)
 {
     for (auto str : strings)
     {
-        bool isFound = fiveletterword.find(str) != std::string::npos;
-        if (isFound == 1)
-        {
-            // return substring
-            return numbers[str];
+        
+        if (fiveletterword.find(str) != std::string::npos){ //only detect if its found on the first string
+            int index = fiveletterword.find(str);
+            if(index == 0){
+                int n = std::stoi(numbers[str]);
+                char c = n + '0';
+                return c;
+            }
         }
     }
-    return "";
+    return '0';
 }
+
+
 int main()
 {
     // parse string first letter needs to
     std::ifstream myFile("1a.txt");
     std::string contents;
+
     int sum = 0;
     if (myFile.is_open())
     {
-        int j = 0; 
+        int j = 0;
         while (myFile.good())
         {
             myFile >> contents;
@@ -52,17 +65,15 @@ int main()
                     foundFirst = true;
                     num[0] = contents[i];
                 }
-                else if(foundFirst == false)
+                else if (foundFirst == false)
                 {
                     std::string word1 = contents.substr(i, 5);
-                    std::string possible = numberfromstring(word1);
-                    if (possible.length() != 0)
+                    char possible = numberfromstring(word1);
+                    if (possible != '0')
                     {
                         // found our number
                         foundFirst = true;
-                        int n = std::stoi(possible);
-                        char c = n + '0';
-                        num[0] = c;
+                        num[0] = possible;
                     }
                 }
                 if (foundLast == false && isdigit(contents[last]))
@@ -71,28 +82,22 @@ int main()
                     num[1] = contents[last];
                 }
 
-                else if(foundLast == false)
+                else if (foundLast == false)
                 {
                     std::string word1 = contents.substr(last, 5);
-                    std::string possible = numberfromstring(word1);
-                    if (possible.length() != 0)
+                    char possible = numberfromstring(word1);
+                    if (possible != '0')
                     {
                         // found our number
                         foundLast = true;
-                        int n = std::stoi(possible);
-                        char c = n + '0';
-                        num[1] = c;
+                        num[1] = possible;
                     }
+
                 }
-
-                // if its not digit then we can try something else like taking next 5 letters and checking if it makes a word
-                //
-
                 i++;
                 if (foundLast && foundFirst)
                 {
-
-                    std::cout << j+1 << " " << num << std::endl;
+                    std::cout << j + 1 << " " << num << " " << std::endl;
                     sum += atoi(num);
                     break;
                 }
@@ -102,9 +107,5 @@ int main()
     }
 
     std::cout << sum << std::endl;
-    // std::string one = "1thsix";
-    // std::string two = "six";
-    // bool isFound = one.find(two) != std::string::npos;
 
-    // std::cout << one.find(two) << std::endl;
 }
