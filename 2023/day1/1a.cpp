@@ -7,9 +7,9 @@
 #include <array>
 #include <algorithm>
 
-#include <map>
+#include <unordered_map>
 #include "../../utils.cpp"
-std::map<std::string, std::string> numbers = {
+std::unordered_map<std::string, std::string> numbers = {
     {"two", "2"},
     {"one", "1"},
     {"three", "3"},
@@ -20,19 +20,18 @@ std::map<std::string, std::string> numbers = {
     {"eight", "8"},
     {"nine", "9"}};
 
-std::vector<std::string> strings = {"eight", "two", "one", "three", "four", "five", "six", "seven", "nine"};
 
 char numberfromstring(std::string fiveletterword)
 {
-    for (auto str : strings)
+    for (auto str : numbers)
     {
 
-        if (fiveletterword.find(str) != std::string::npos)
+        if (fiveletterword.find(str.first) != std::string::npos)
         { // only detect if its found on the first string
-            int index = fiveletterword.find(str);
+            int index = fiveletterword.find(str.first);
             if (index == 0)
             {
-                int n = std::stoi(numbers[str]);
+                int n = std::stoi(str.second);
                 char c = n + '0';
                 return c;
             }
@@ -90,7 +89,7 @@ int day1(std::vector<std::string> input)
             i++;
             if (foundLast && foundFirst)
             {
-                std::cout << j + 1 << " " << num << " " << std::endl;
+                // std::cout << j + 1 << " " << num << " " << std::endl;
                 sum += atoi(num);
                 break;
             }
