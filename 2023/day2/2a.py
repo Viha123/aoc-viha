@@ -1,3 +1,4 @@
+import math
 RED = 12
 GREEN = 13
 BLUE = 14
@@ -14,7 +15,18 @@ def day2(input):
         if goodgroup:
             sum += id
     return sum 
+def day2partb(input):
+    sum = 0
+    for line in input:
+        sets = line[line.find(":")+1:].split(";")
+        min_cubes = [0,0,0]
+        for set in sets:
+            rgb_values = get_rgb(set)
+            min_cubes = [max(rgb_values[0], min_cubes[0]), max(rgb_values[1], min_cubes[1]), max(rgb_values[2], min_cubes[2])]
+        mult = min_cubes[0] * min_cubes[1] *  min_cubes[2]
+        sum += mult
 
+    return sum  
 
 def get_game_id(string):
     string = string[0:string.find(":")]
@@ -38,4 +50,4 @@ def get_rgb(string):
         
 file = open("two.txt", "r")
 data =  file.readlines()
-print(day2(data))
+print(day2partb(data))
