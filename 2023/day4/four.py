@@ -1,6 +1,9 @@
 import re
-file = open("2023/day4/four.txt", "r")
+import time
+start_time = time.time()
+file = open("four.txt", "r")
 data = file.readlines()
+count =0
 def part1():
     sum = 0
     i=1
@@ -25,6 +28,7 @@ def part1():
 def part2(line_no, memo):
     #base caes for recursion
     # print(f"in line: {line_no+1}")
+    global count
     if(line_no in memo):
         return memo[line_no] #easy return out of recursion function
     #otherwise it doesn't exist and need to parse and save it for future
@@ -39,12 +43,14 @@ def part2(line_no, memo):
             points += 1
     if points == 0: #base case
         memo[line_no] = 0
+        count += 1
         return memo[line_no]
     subSum = 0 
     for i in range (1, points + 1):
         card_no = current_no + i
         subSum += 1 + part2(card_no-1, memo)
     memo[line_no] = subSum
+    count += 1
     return memo[line_no]
 
 # print(part1())
@@ -53,3 +59,5 @@ memo = dict()
 for line_no in range(0, len(data)):
     sum += 1 + part2(line_no, memo)
 print(sum)
+# print(count)
+print("-----%s seconds------" % (time.time() - start_time))
