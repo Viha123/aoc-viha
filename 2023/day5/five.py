@@ -1,6 +1,6 @@
 import re
 
-file = open("2023/day5/test.txt", "r")
+file = open("2023/day5/input.txt", "r")
 data = file.readlines()
 line = 0
 #utility functions to: 
