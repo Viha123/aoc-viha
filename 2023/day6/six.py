@@ -1,6 +1,6 @@
 import re
 import math
-file = open("2023/day6/input.txt")
+file = open("input.txt")
 data = file.readlines()
 
 # def move_amount(hold_for, total_time):
