@@ -1,6 +1,7 @@
 import copy
+import math
 def readInput():
-    file = open("test.txt", 'r')
+    file = open("input.txt", 'r')
     lines = file.readlines()
 
     return (lines[0], lines[2:])
@@ -43,56 +44,73 @@ def part1(instructions, keys, values):
             currentKey = output
         i += 1
 def part2(instructions, keys, values):
-    # endsA = endsWithA(keys)
-    # i = 0 #iteration
-    # l = len(instructions)
-    # nextPaths = []
-    # for ele in endsA:
-    #     nextPaths.append([ele, 0]) # 0 means to not remove 1 means to remove
-    # counter = len(endsA)
-    # # c = 1
-    # allZ = 0
-    # while counter != 0:
-    #     insIndex = i % l 
-    #     allZ = 0
-    #     for index, end in enumerate(endsA):
-    #         if instructions[insIndex] == "R":
-    #             output = getRight(values[keys[nextPaths[index][0]]])
-    #         else:
-    #             output = getLeft(values[keys[nextPaths[index][0]]])
-    #         if (output[2] == "Z"):
-    #             nextPaths[index] = [output, 0] #found
-                
-    #             print(allZ)
-    #         else:
-    #             nextPaths[index] = [output, 0]
-            
-    #     i += 1
-    # return i 
-    
-    
+
     l = len(instructions)
-    currentKeys = endsWithA(values)
+    print(l)
+    currentKeys = endsWithA(keys)
+    # print(currentKeys)
     lcm = 1
+    all_data = []
     for currentKey in currentKeys:
         i = 0
-        found = False
-        while not found:
+        all_zs_found = [] #list of count to get there, index of line of z, and index of instruction
+        loopDetected = False
+        current = currentKey
+        print(current)
+        while not loopDetected: #keep going until loop detected to find all places where start reaches end with z
             insIndex = i % l 
             if instructions[insIndex] == "R":
-                output = getRight(values[keys[currentKey]])
+                output = getRight(values[keys[current]])
+                # print(output)
             else:
-                output = getLeft(values[keys[currentKey]])
-            
+                output = getLeft(values[keys[current]])
+                # print(output)
             if (output[2] == "Z"):
-                found = True
-                return i + 1
+                #check if it has already existed
+                # print("node that end with z")
+                for z_found in all_zs_found:
+                    if z_found[1] == keys[current] and insIndex == z_found[2]:#returns index of currentZ val
+                        # all_zs_found.append([i+1, keys[current], insIndex])
+                        loopDetected = True
+                        break
+                #if loop not detected, add to all_zs_found
+                if not loopDetected: 
+                    all_zs_found.append([i+1, keys[current], insIndex]) 
+                    current = output
             else:
-                currentKey = output
+                current = output
+
             i += 1
-        print(i+1)
-        lcm *= (i + 1)
-    return lcm
+        #found our loop, so all zs reachable by this end_a have been found
+        all_data.append(all_zs_found)
+    print(all_data)
+    # all_data = [[[2,1,1]],[[6,5,1]]]
+    #loop over all_data in a way that index is the same and take max of first index
+    m = 1
+    mul = 1 
+    lcm = []
+    for d in all_data:
+        m = max(m,d[0][0])
+        mul *= (d[0][0])
+        lcm.append(d[0][0])
+    gcd = find_gcd(all_data[0][0][0], all_data[1][0][0])
+    for i in range (2, len(all_data)):
+        gcd = find_gcd(gcd, all_data[i][0][0])
+
+    #trying to find a pattern
+    for d in all_data:
+        print(d[0][0]/gcd)
+    
+    print(math.lcm(*lcm))
+    # print((mul/gcd)/gcd)
+    return mul
+
+def find_gcd(x, y): 
+#copied cuz i don't remember math :D      
+    while(y): 
+        x, y = y, x % y 
+      
+    return x
 if __name__ == "__main__":
 
 
@@ -100,6 +118,6 @@ if __name__ == "__main__":
     instructions = data[0].strip()
     
     (keys, values) = parseInput(data)
-    # print(part1(instructions, keys, values))
+    print(part1(instructions, keys, values))
     print(part2(instructions, keys, values))
     
