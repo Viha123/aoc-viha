@@ -1,6 +1,6 @@
 import re
 
-file = open("2023/day5/input.txt", "r")
+file = open("2023/day5/test.txt", "r")
 data = file.readlines()
 line = 0
 #utility functions to: 
@@ -9,7 +9,7 @@ check interval and return interval:
     - if no interval return in order
 convert input into range for exmaple: [79 14] maps to [79, 92] 
 """
-def get_interval(seed_pair, mapping_pair): #min1, max1: min2, max2
+def get_interval(seed_pair, mapping_pair, not_found): #min1, max1: min2, max2
     #check if they don't overlap then just return them both
     if(seed_pair[1] > mapping_pair[1] and seed_pair[0] >mapping_pair[1]): #seed pair to the right of mapping pair
         return []
@@ -24,19 +24,39 @@ def get_interval(seed_pair, mapping_pair): #min1, max1: min2, max2
         #from left  to interval-left and from inteval_right +1 to right, not intersected need to be kept the same
         #third num tells whether to intersect or not
         #check if numbers that aren't have bits 0 are part of seed_pair or mapping_pair
+        #check if interval_left and interval_right are part of range or no
         final_ranges = []
+        interval_left += check(seed_pair, interval_left, 0)
+        interval_right  += check(seed_pair, interval_right, 1)
         final_ranges.append([interval_left, interval_right, 1])
+        
         if(check_if_mapping(mapping_pair, [left, interval_left-1, 0])):
             final_ranges.append([left, interval_left-1, 0])
+        else:
+            if check_if_exists(not_found, [left, interval_left-1, 0]) is not None: #only append to not found if it unique
+                not_found.append([left, interval_left-1, 0])
         if(check_if_mapping(mapping_pair, [interval_right+1, right, 0])):
             final_ranges.append([interval_right+1, right, 0])
-        return final_ranges #closed, open 
+        else:
+            if check_if_exists(not_found, [interval_right+1, right, 0]) is not None:
+                not_found.append([interval_right+1, right, 0])
+        #at this point final_ranges has at least 1 element
+        
+        return (not_found, final_ranges) #closed, open 
     
 def check_if_mapping(mapping_pair, interval): #return True if range and false if mappping
     if interval[0] >= mapping_pair[0] and interval[1] <= mapping_pair[1]:
         return False
     else: 
         return True
+def check(range_pair, edge, dir): #returns 0 
+    if edge >= range_pair[0] or edge <= range_pair[1]: #check if edge is part of range
+        return 0
+    if dir == 0: #not part of range
+        return 1
+    else: 
+        return -1 
+    
 
 def convert_to_range(initial):
 
@@ -91,36 +111,38 @@ def isLegit(pair):
     return False
 
 def convert_x_to_yp2(initial, line):
-    #parse all data and put into array of arrays
-
+    #parse all data and put into array of array
     mappings = []
     output = []    
-    # print(line, initial)
-    # print(line) 
+ 
     while(line < len(data) and data[line] != "\n"): #getting all data into mappings 
         info = [eval(i) for i in re.findall(r"\d+", data[line])] 
         info[2] = info[1] + info[2] -1 #converting info io interval
         mappings.append(info)
         line += 1
-    # print(mappings)
     new_initial = []
+    #keeps a list of all the ranges that were not found, and then we will iterate through this list to see, if 
+    not_found = [] 
     for pair in initial:
-        found_interval = False
+        # found_interval = False
         for map in mappings: # all numbers in teh groupu should have same mapping
-            sub = get_interval(pair, [map[1], map[2]])
+            (nf, sub) = get_interval(pair, [map[1], map[2]], not_found)
+            not_found = nf # get updated value of not found 
             # print(sub)
             if(len(sub)>0):
-                found_interval = True
+                # found_interval = True
                 for s in sub: 
                     duplicate = check_if_exists(new_initial, s)
-                    if duplicate is not None: 
-                        if new_initial[duplicate][2] == 1 or s[2] == 1: #makign sure we don't add duplicates
-                            new_initial[duplicate][2] = 1
-                    else:
+                    if duplicate is None:
                         new_initial.append(s)
-        if found_interval == False:
-            pair.append(0)
-            new_initial.append(pair)
+        # if found_interval == False:
+        #     pair.append(0)
+        #     new_initial.append(pair)
+    
+    for nf in not_found:
+        #somehow figure out which ones are REALLY not found
+        #which intervals aren't 
+        for found_pair in 
     
     #another for loop to update 
     print(f"new initial: {new_initial}")
@@ -154,15 +176,14 @@ initial = convert_to_range([eval(j) for j in re.findall(r"\d+", data[line])])
 
 # initial = expand_initial([eval(j) for j in re.findall(r"\d+", data[line])])
 # print(initial)
-# initial = expand_initial(initial)
-# print(initial)
 line += 3
 # (initial, line) = convert_x_to_yp2(initial, line)
 # print(initial)
-# (initial, line) = convert_x_to_yp2(initial, line)
 while line < len(data):
     # print(data[line])
     (initial, line) = convert_x_to_yp2(initial, line)
     # print(f"{line} initial + {initial}")
     line += 2 #remove \n and serve only the numbers
+
+print(initial)
 print(min(initial))

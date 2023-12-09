@@ -46,7 +46,6 @@ def part1(instructions, keys, values):
 def part2(instructions, keys, values):
 
     l = len(instructions)
-    print(l)
     currentKeys = endsWithA(keys)
     # print(currentKeys)
     lcm = 1
@@ -56,21 +55,16 @@ def part2(instructions, keys, values):
         all_zs_found = [] #list of count to get there, index of line of z, and index of instruction
         loopDetected = False
         current = currentKey
-        print(current)
         while not loopDetected: #keep going until loop detected to find all places where start reaches end with z
             insIndex = i % l 
             if instructions[insIndex] == "R":
                 output = getRight(values[keys[current]])
-                # print(output)
             else:
                 output = getLeft(values[keys[current]])
-                # print(output)
             if (output[2] == "Z"):
                 #check if it has already existed
-                # print("node that end with z")
                 for z_found in all_zs_found:
                     if z_found[1] == keys[current] and insIndex == z_found[2]:#returns index of currentZ val
-                        # all_zs_found.append([i+1, keys[current], insIndex])
                         loopDetected = True
                         break
                 #if loop not detected, add to all_zs_found
@@ -83,41 +77,19 @@ def part2(instructions, keys, values):
             i += 1
         #found our loop, so all zs reachable by this end_a have been found
         all_data.append(all_zs_found)
-    print(all_data)
     # all_data = [[[2,1,1]],[[6,5,1]]]
     #loop over all_data in a way that index is the same and take max of first index
-    m = 1
-    mul = 1 
     lcm = []
     for d in all_data:
-        m = max(m,d[0][0])
-        mul *= (d[0][0])
         lcm.append(d[0][0])
-    gcd = find_gcd(all_data[0][0][0], all_data[1][0][0])
-    for i in range (2, len(all_data)):
-        gcd = find_gcd(gcd, all_data[i][0][0])
 
-    #trying to find a pattern
-    for d in all_data:
-        print(d[0][0]/gcd)
-    
-    print(math.lcm(*lcm))
-    # print((mul/gcd)/gcd)
-    return mul
+    return math.lcm(*lcm)
 
-def find_gcd(x, y): 
-#copied cuz i don't remember math :D      
-    while(y): 
-        x, y = y, x % y 
-      
-    return x
 if __name__ == "__main__":
-
-
     data = readInput()
     instructions = data[0].strip()
     
     (keys, values) = parseInput(data)
-    print(part1(instructions, keys, values))
-    print(part2(instructions, keys, values))
+    print(f"Part 1: {part1(instructions, keys, values)}")
+    print(f"Part 2: {part2(instructions, keys, values)}")
     

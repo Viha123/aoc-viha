@@ -5,8 +5,9 @@ def part2(data, seeds, mappers):
     results = [expand(mappers, 'seed', 'location', seed_range) for seed_range in zip(seeds[0::2], seeds[1::2])]
     
     # flatten the list of lists into a list
+    # print(results)
     results = [item for sublist in results for item in sublist]
-
+    print(results)
     # answer is the minimum value of the first element of each tuple
     print ("Part 2:", min(x[0] for x in results))
 
@@ -61,7 +62,7 @@ def makeMap(data):
 
 # function to read the file and split the data at blank lines
 def readMap():
-    with open('2023/day5/input.txt') as f:
+    with open('test.txt') as f:
         return f.read().split('\n\n')
 
 if __name__ == "__main__":
