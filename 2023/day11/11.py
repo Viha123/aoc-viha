@@ -1,5 +1,5 @@
 def readInput():
-    file = open("input.txt", "r")
+    file = open("2023/day11/input.txt", "r")
     data = []
     emptyRows = []
     emptyCols = []
@@ -56,12 +56,7 @@ class Pair:
         return (hash(self.p1) + hash(self.p2))
     def __repr__(self):
         return "(" + str(self.p1//len(data[0])) + ", " + str(self.p1 % len(data[0])) + ") " + "(" + str(self.p2//len(data[0])) + ", " + str(self.p2 % len(data[0])) + ") " 
-                
-    
-# def exists(checkPair, done):
-#     for pair in done: #pairs will be sorted by row
-#         if pair[0]
-#     return False
+
 def part1(data):
     galaxies = []
     for r in range(len(data)):
@@ -73,20 +68,30 @@ def part1(data):
     distance = 0
     l = len(data[0])
     pairs = 0
+    factor = 1000000
     for gal in galaxies:
         for g in galaxies:
             p = Pair(gal[0]*l + gal[1], g[0]*l + g[1])
             if p not in done and p.p1 != p.p2:
-                dist = abs(gal[0]-g[0]) + abs(gal[1]-g[1])
-                # print(p,dist )
-                distance += abs(gal[0]-g[0]) + abs(gal[1]-g[1])
+                countR = findCount(gal[0],g[0], emptyRows)
+                countC = findCount(gal[1],g[1], emptyCols)
+                dist = abs(gal[0]-g[0])-countR + abs(gal[1]-g[1])-countC + (countR*(factor)) + (countC * factor)
+
+                # print(p,abs(gal[0]-g[0])-countR , abs(gal[1]-g[1])-countC , (countR*(factor)) , (countC * factor), dist)
+                distance += dist
                 done.add(p)
     # print(pairs)
     return distance
-
+def findCount(n1, n2, num):
+    l = max(n1,n2)
+    s = min(n1,n2)
+    c = 0
+    for i in range(s, l+1):
+        if i in num:
+            c += 1
+    return c
 if __name__ == "__main__":
     (data, emptyRows, emptyCols) = readInput()
-    expanded = expand(data, emptyRows, emptyCols)
-    # for e in expanded:
-    #     print(e)
-    print(part1(expanded))
+
+    print(emptyRows, emptyCols)
+    print(part1(data))
