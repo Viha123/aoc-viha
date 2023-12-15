@@ -1,12 +1,12 @@
 import copy
+import functools
 def readInput():
     file = open("2023/day12/input.txt", "r")
     data = file.readlines()
     return data
-
+@functools.cache
 def calculateLine(numWays, line, keys):
     numQuestions = 0
-
     hashCount= 0
     #boolean to see if we have had a group of hashyet
     hashGroup = False
@@ -23,7 +23,7 @@ def calculateLine(numWays, line, keys):
             if hashGroup:
                 hashGroup = False # there is a dot after a #
                 if len(keys) > 0 and hashCount == keys[0]:
-                    keys.pop(0)
+                    keys = keys[1:]
                     # hashCount = 0
                     #this is good continue calcualting line (still in the chance of beinga  valid thing)
                     return calculateLine(numWays, line[i+1:],copy.deepcopy(keys)) #start from after the hashCount stuff
@@ -53,8 +53,13 @@ if __name__ == "__main__":
     for line in data:
         ways = 0
         problem = line.split(" ")[0]
+        repeatLine = problem
         keys = [eval(i) for i in line.split(" ")[1].strip().split(",")]
-        all_combs = calculateLine(ways, problem,keys)
-        # print(all_combs) #returns int of possible valid ways
+        repeatKeys = copy.deepcopy(keys)
+        for i in range (0,4):
+            problem += "?" + repeatLine
+            keys += repeatKeys
+        print(problem, keys)
+        all_combs = calculateLine(ways, problem, tuple(keys))
         s += all_combs
     print(s)
