@@ -8,29 +8,43 @@ def readInput():
     # print(total)
     return total
 def findVertical(data, reversed):
-    i = 0
-    while i < len(data):
-        if reversed:
-            line = data[i][::-1]
-        else: 
-            line = data[i]
-        left = 0
-        right = len(line) -1
-        while left < right:
-            if line[left] == line[right]:
-                left += 1
-                right -= 1
-            else:
-                right = len(line)-1
-                # left += 1
-                if line[left] != line[right]:
-                    left += 1
-        if i == 0:
-            current = left
-        elif current != left:
-            return None
-        i += 1
-    return current
+    #start from left
+    current = None
+    vertical = True
+    if reversed: 
+        for i in range (len(data)):
+            lineList = list(data[i])
+            lineList.reverse()
+            str = "".join(lineList)
+            data[i] = str
+            print(data[i])
+        
+    for line in data: #left side, need to do the same for right side
+        for ptr in range(len(line)):
+            #delete left side first
+            half = (len(line)-ptr) // 2
+            firstHalf = line[ptr:(ptr+half)]
+            secondHalf = list(line[(ptr+half):])
+            secondHalf.reverse()
+            str = ''.join(secondHalf)
+            if (firstHalf == str): #if first half not equal to second half
+                if current == None:
+                    current = half + ptr
+                
+                elif current == (half + ptr):
+                    vertical = True
+                    break
+                if current != (half + ptr):
+                    vertical = False
+        if vertical == False:
+            break
+    
+    if vertical == True:
+        return current
+    else:
+        return None
+        
+
 def part1(data):
     pass
 def findHorizontal(data, reversed):
@@ -39,14 +53,17 @@ def findHorizontal(data, reversed):
         line = []
         for l in range(len(data)):
             line.append(data[l][c])
-        toSend.append(line) 
+        str = ''.join(line)
+        toSend.append(str) 
     # print(toSend)
-    ans = findVertical(toSend, reversed)
-    # print(ans)
-    return ans
+    ans = findVertical(toSend, False)
+    # ans2 = findVertical(toSend, True)
+    print(ans)
+    return ans #whichever is true
 if __name__ == "__main__":
     data = readInput()
     # assert False
     for pattern in data:
         print(f"vertical: {findVertical(pattern, False)}")
-        print(f"horizontal: {findHorizontal(pattern, False)}")
+        print(f"Vertical reversed: {findVertical(pattern, True)}")
+        # print(f"horizontal: {findHorizontal(pattern, False)}")
