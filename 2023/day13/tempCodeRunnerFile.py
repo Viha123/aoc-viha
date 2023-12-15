@@ -1,1 +1,1 @@
-None
+            masterReflections = masterReflections.intersection(reflections)
