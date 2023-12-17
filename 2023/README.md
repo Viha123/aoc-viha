@@ -11,6 +11,10 @@ Just a log of my thoughts and approaches for the solutions!
 - Day 12: Recursion + some pruning, and then used functools.cache for memoization. (kind of lazy but couldn't figure out how to do it without)
 - Day 13: Terrible code, cannot figure out a better solution, but it works
     - Reddit Tips after: should have counted differences instead and that would have made the conversion to part 2 extremely easy
-- Day 14: 
+- Day 14: PART B WAS SUPER FUN AND INTERESTING. I WAS OFF BY 7 IN MY FIRST TRY. 
+    - I wasn't able to figure out part b easily. I knew there was cycle detection involved but I couldn't get it. After reading: @derailed_dash's github repo I understood the algorithm. I will be reading their repo to learn how they did the other problems because they explain their code, and it will be a good learning experience for me. 
+    - The algorithm required finding the length of the cycle, the first repeated cycle and the number of additional cycles
+    - I had an off by one even after reading the solution, that was because i did not account for the fact that the current node was already found, so I needed to add that. 
+    - really cool, I'm sure i'll be able to recognize this pattern next time! 
 - Day 15: Implemented Hashmaps using arrays and linked lists, even though that was not required, my best day in terms of placement
 - Day 16:
