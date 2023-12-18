@@ -18,4 +18,10 @@ Just a log of my thoughts and approaches for the solutions!
     - This is the website that I used: https://aoc.just2good.co.uk/ 
     - really cool, I'm sure i'll be able to recognize this pattern next time! 
 - Day 15: Implemented Hashmaps using arrays and linked lists, even though that was not required, my best day in terms of placement
-- Day 16:
+- Day 16: The light beams, I had a stupid error, where I looked at the next value instead of the current value. I was able to figure it out in the end, was quite proud to be able to get the solution
+- Day 17: I know this is A* or Dijkstra's skipped it pretty instantly as of now. Will come back to it after Day 18
+- Day 18: MANNN OH MAN THIS IS FRUSTRATING. I tried the same principle as Day 10 partb but due to some bug somewhere, I can't figure it out. So I'm gonna try the shoelace algorithm and Pick's algorithm and hope it works
+    - update picks theorem worked first try, i feel insanely stupid for sticking so hard with building the 2d array from scratch. 
+    - we live and we learn i guess
+
+    
