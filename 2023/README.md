@@ -20,8 +20,11 @@ Just a log of my thoughts and approaches for the solutions!
 - Day 15: Implemented Hashmaps using arrays and linked lists, even though that was not required, my best day in terms of placement
 - Day 16: The light beams, I had a stupid error, where I looked at the next value instead of the current value. I was able to figure it out in the end, was quite proud to be able to get the solution
 - Day 17: I know this is A* or Dijkstra's skipped it pretty instantly as of now. Will come back to it after Day 18
-- Day 18: MANNN OH MAN THIS IS FRUSTRATING. I tried the same principle as Day 10 partb but due to some bug somewhere, I can't figure it out. So I'm gonna try the shoelace algorithm and Pick's algorithm and hope it works
+- Day 18: MANNN OH MAN THIS IS FRUSTRATING. I tried the same principle as Day 10 partb but due to some bug somewhere, I can't figure it out, and it also requies constructing a 2d array so large that it won't work. So I'm gonna try the shoelace algorithm and Pick's algorithm and hope it works
     - update picks theorem worked first try, i feel insanely stupid for sticking so hard with building the 2d array from scratch. 
     - we live and we learn i guess
+    - part b was a really easy conversion. 
+    - this was a journey. Its really cool how random facts about math can solve real world programming problems (like dig a logoon of lava)
+    - my mind is truly blown by the math tho
 
     
