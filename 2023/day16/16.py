@@ -52,9 +52,9 @@ class Point: #copied from day 10 (should put this in an util later)
         #row * len(data) + col
         return hash(self.r * len(data) + self.c)
     
-def part1(data):
+def part1(data, startingPoint):
     #starts moving east and then depending on what it encounters it goes 
-    start = Point(0,0,east)
+    start = startingPoint
     #set to measure all points that have already been 
     energized = set() #set of points
     energized.add(start)
@@ -67,8 +67,7 @@ def part1(data):
         for point in openPoints: 
             if point != None:
                 p = data[point.r][point.c]
-                # next = point.move()
-                # energized.add(point)
+                next = point.move()
                 if p == "|":
                     #if next dir is east or west then add north and south points to frontier
                     # print("split if same dir")
@@ -80,7 +79,6 @@ def part1(data):
                         if next2 not in energized:
                             frontiers.append(next2)
                     else:
-                        next = point.move()
                         frontiers.append(next)    
                                 
                 elif p == "-":
@@ -92,7 +90,6 @@ def part1(data):
                         if next2 not in energized:
                             frontiers.append(next2)
                     else:
-                        next = point.move()
                         frontiers.append(next)    
                 elif p == '\\':
                     if point.dir == east:
@@ -106,7 +103,7 @@ def part1(data):
                     next = point.move()
                     frontiers.append(next)    
                 elif p == "/":
-                    print("pause here")
+                    # print("pause here")
                     if point.dir == east:
                         point.dir = north
                     elif point.dir == south:
@@ -118,22 +115,42 @@ def part1(data):
                     next = point.move()
                     frontiers.append(next)      
                 else:
-                    next = point.move()
                     frontiers.append(next)      
                 energized.add(point) #add any point that we just iterated over
             frontiers.remove(point)
             # print(len(energized), len(frontiers))
 
-    output = [ [0]*len(data[0]) for i in range(len(data))]
+    # output = [ [0]*len(data[0]) for i in range(len(data))]
 
-    for p in energized:
-        output[p.r][p.c] = "#"
-    for line in output:
-        print(line)
+    # for p in energized:
+    #     output[p.r][p.c] = "#"
+    # for line in output:
+    #     print(line)
     return len(energized)   
         # assert False
+def findStartingPoints(data):
+    #any edges, if corners then can choose any 
+    #for top row, face south
+    starting = []
+    for i in range(len(data[0])): #top row
+        starting.append(Point(0, i, south)) 
+    for i in range(len(data[0])): #bottom row
+        starting.append(Point(len(data)-1, i, north))
+    for i in range(len(data)): #left col
+        starting.append(Point(i, 0, east))
+    for i in range(len(data)): #right col
+        starting.append(Point(i, len(data[0])-1, west))
+    # print(starting )
+    return starting
 
+def part2(data):
+    startingPoints = findStartingPoints(data)
+    best = -1
+    for start in startingPoints:
+        best = max(part1(data, start), best)
+    return best
 if __name__ == "__main__":
     data = readInput()
     # print(data)
-    print(part1(data))
+    # print(part1(data, Point(0,0,east)))
+    print(part2(data))
