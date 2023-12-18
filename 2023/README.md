@@ -15,6 +15,7 @@ Just a log of my thoughts and approaches for the solutions!
     - I wasn't able to figure out part b easily. I knew there was cycle detection involved but I couldn't get it. After reading: @derailed_dash's github repo I understood the algorithm. I will be reading their repo to learn how they did the other problems because they explain their code, and it will be a good learning experience for me. 
     - The algorithm required finding the length of the cycle, the first repeated cycle and the number of additional cycles
     - I had an off by one even after reading the solution, that was because i did not account for the fact that the current node was already found, so I needed to add that. 
+    - This is the website that I used: https://aoc.just2good.co.uk/ 
     - really cool, I'm sure i'll be able to recognize this pattern next time! 
 - Day 15: Implemented Hashmaps using arrays and linked lists, even though that was not required, my best day in terms of placement
 - Day 16:
