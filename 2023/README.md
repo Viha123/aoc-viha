@@ -30,5 +30,15 @@ Just a log of my thoughts and approaches for the solutions!
     - part b was a really easy conversion. 
     - this was a journey. Its really cool how random facts about math can solve real world programming problems (like dig a logoon of lava)
     - my mind is truly blown by the math tho
+- Day 19: part 2 seemed doable at first but I think i completely misunderstood the question. I calculated the number of xmas values accepted and then multiplied them. BUT i didn't realize that values of x could be rejected but if paired up with other values of mas, they could be accepted.need to think of all the ranges as one
+    - I think looking at other people's methods have helped me understand stuff
+    - Tentatively tweaking some things should get me to output, will try it tmrw.
+    - this has been immensely helpful while debugging: https://www.reddit.com/r/adventofcode/comments/18mau1e/2023_day_19_why_does_my_solution_for_part_2_not/. Thank you to @1234abcdcba4321 redditer
+    - AFTER 3 HOURS OF DEBUGGING I DID IT! 
+    - the code wasn't that difficult i was able to imagine the solution, the previous version needed just a few tweeks. 
+    - LEARNING: try to print before using debuggers, i think i spent too much time comparing with bare eyes. Espectially cuz i had expected output in front of me. 
+    - I definitely owuld not have been able to figure it out without the help of the expected output
+- Day 20: advent of reading comprehension too tired to do this
+
 
     
