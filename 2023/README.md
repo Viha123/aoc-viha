@@ -39,6 +39,11 @@ Just a log of my thoughts and approaches for the solutions!
     - LEARNING: try to print before using debuggers, i think i spent too much time comparing with bare eyes. Espectially cuz i had expected output in front of me. 
     - I definitely owuld not have been able to figure it out without the help of the expected output
 - Day 20: advent of reading comprehension too tired to do this
-
+- Day 21: got part a pretty quickly, but i did it pretty inefficiently
+    - part b i kind of instantly gave up, its way above my understanding
+    - i had an idea that would try and find the cycle for each . adn then find where it goes from ther, but I can't completely visualize the solution and so I can't reall code it if I don't know what im trying to do
+    - I'm using this github to try and understand the solution: https://github.com/derailed-dash/Advent-of-Code/blob/master/src/AoC_2023/Dazbo's_Advent_of_Code_2023.ipynb
+I'm sorry I quit this year. 
+- I think I came really far. 37/50 stars is more than I expected to get. I learned a lot but putting more time on this is not worth it for the remainder of the winter break. 
 
     
