@@ -48,7 +48,7 @@ fn check_iter<I: Iterator<Item = i32>>(mut iter: I) -> bool {
         Some(x) => x,
         None => return true, // empty is trivially valid
     };
-
+    
     let mut is_increasing = true;
     let mut is_decreasing = true;
     for curr in iter {
@@ -64,6 +64,7 @@ fn check_iter<I: Iterator<Item = i32>>(mut iter: I) -> bool {
     is_increasing || is_decreasing
 }
 fn check(vec: &[i32]) -> bool {
+    
     let increasing_check: Vec<&[i32]> = vec
         .chunk_by(|x, y| (x <= y && i32::abs(x - y) >= 1 && i32::abs(x - y) <= 3))
         .collect();
@@ -80,24 +81,21 @@ fn part2(lines: &Vec<String>) -> i32 {
     for line in lines {
         let vec = get_vec_from_line(line);
         let mut i = 0;
-        if check(&vec) {
-            n_safe += 1;
-        } else {
-            let mut found_safe = false;
-            while i < vec.len() && !found_safe {
-                // if i were to be removed
-                let new_vec: Vec<i32> = vec[0..i]
-                    .iter()
-                    .chain(vec[i + 1..].iter())
-                    .cloned()
-                    .collect();
-                if check(&new_vec) {
-                    n_safe += 1;
-                    found_safe = true;
-                }
-                i += 1;
+        let mut found_safe = false;
+        while i < vec.len() && !found_safe {
+            // if i were to be removed
+            let new_vec: Vec<i32> = vec[0..i]
+                .iter()
+                .chain(vec[i + 1..].iter())
+                .cloned()
+                .collect();
+            if check(&new_vec) {
+                n_safe += 1;
+                found_safe = true;
             }
+            i += 1;
         }
+        
     }
     n_safe
 }
