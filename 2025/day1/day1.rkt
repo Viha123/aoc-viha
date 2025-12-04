@@ -24,26 +24,13 @@
         [div (floor (/ (abs num) 100))] ;; how many circles did this move take
         [remain (abs(floor (/ overflow 100)))] ;; checking if the overflow would have hit 0
         [real-remain (if (and (= 0 x) (not (= remain 1))) (+ remain 1) remain)]) ;; add one if it hits 0 after a move only if the previous overflow check didn't work
-  (display num)
-  (display " ")
-  (display x)
-  (display " ")
-  (display overflow)
-  (display " ")
-  (display div)
-  (display " ")
-  (display remain)
-  (display " ")
-  (displayln acc)
-  ; (list x (+ (cadr acc) (+ div remain))))
   (if (= (car acc) 0) (list x (+ (cadr acc) div)) (list x (+ (cadr acc) (+ div real-remain))))) 
 )
 ;; part 1
 (define numbers (map interp-number input-list))
-(displayln numbers)
 (define ans (foldl compute (list dial-start 0) numbers))
 (displayln (cadr ans))
 
 ;; part 2
 (define p2 (foldl compute-2 (list dial-start 0) numbers))
-(displayln (cadr p2))
+(displayln (cadr p2)) ;; ans: 6289 
