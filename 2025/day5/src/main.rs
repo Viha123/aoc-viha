@@ -4,11 +4,12 @@ use std::fs::File;
 use std::io::{self, BufRead, BufReader};
 
 static FILE_PATH: &str = "input.txt";
+// mostly happy with this one, everyone else seemed to have decided to use a merged_array for part 2 where they keep track of all merged itnervals
 
 fn parse_input() -> (Vec<(u64, u64)>, Vec<u64>) {
     let file = File::open(FILE_PATH);
     let reader: BufReader<File> = BufReader::new(file.unwrap());
-    let lines = reader
+    let lines = re  ader
         .lines()
         .collect::<Result<Vec<String>, io::Error>>()
         .unwrap();
@@ -69,4 +70,5 @@ fn main() {
     // 340254387275825: too high
     // 339668510830750: too low
     // 339668510830757
+    // GOT like ~8500th place!!!!! (my personal best)
 }

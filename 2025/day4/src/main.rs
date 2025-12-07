@@ -3,6 +3,7 @@ use std::{fs::File, io::BufReader};
 use std::io::{self, BufRead};
 
 static FILE_PATH: &str = "input.txt";
+// i could have put the 'a' symbosl in a map that would have made life a lot easier
 
 fn parse_lines() -> Vec<String> {
     let file = File::open(FILE_PATH);
