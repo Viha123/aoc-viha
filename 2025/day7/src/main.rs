@@ -1,6 +1,7 @@
 use std::collections::{HashMap, HashSet};
 use std::fs::File;
 
+use std::hash::Hash;
 use std::io::{self, BufRead, BufReader};
 
 static FILE_PATH: &str = "input.txt";
@@ -63,27 +64,24 @@ fn parse_file() -> (HashSet<Coordinate>, Coordinate, usize) {
 }
 fn part1(points: &HashSet<Coordinate>, current: &Coordinate, total_rows: usize) -> u32 {
     let mut visited: HashSet<Coordinate> = HashSet::new();
-    let mut cache: HashMap<Coordinate, u32> = HashMap::new();
-    let splits = dfs(points, &mut visited, &mut cache, current, total_rows);
-    // println!("visited: {:?}", visited);
-    // println!("points: {:?}", points.len());
+    let splits = dfs(points, &mut visited, current, total_rows);
     splits
 }
 
+fn part2(points: &HashSet<Coordinate>, current: &Coordinate, total_rows: usize) -> u64 {
+    let mut visited: HashSet<Coordinate> = HashSet::new();
+    let mut cache: HashMap<Coordinate, u64> = HashMap::new();
+    let timelines = dfs_all_timelines(points, &mut visited, &mut cache, current, total_rows);
+    timelines
+}
 fn dfs(
     points: &HashSet<Coordinate>,
     visited: &mut HashSet<Coordinate>,
-    cache: &mut HashMap<Coordinate, u32>,
     current: &Coordinate,
     total_rows: usize,
 ) -> u32 {
     if current.r >= total_rows {
         return 0;
-    } else if points.contains(current) && cache.contains_key(current) {
-        println!("used cache");
-        return *cache
-            .get(current)
-            .expect("never run because i legit just made check");
     } else if points.contains(current) {
         // split
         let (n1, n2) = current.split();
@@ -91,19 +89,42 @@ fn dfs(
         if !visited.contains(current) {
             total = 1;
             visited.insert(current.clone());
-            let i1 = dfs(points, visited, cache, &n1, total_rows);
-            cache.insert(n1.clone(), i1);
-            let i2 = dfs(points, visited, cache, &n2, total_rows);
-            cache.insert(n2.clone(), i2);
-            return i1 + i2 + total; // split happened. Don't add 1 after you split rather thwne
+            total += dfs(points, visited, &n1, total_rows);
+            total += dfs(points, visited, &n2, total_rows);
+            return total; // split happened. Don't add 1 after you split rather thwne
         } else {
             return total;
         }
     } else {
         let node = current.next();
         visited.insert(current.clone());
-        let val = dfs(points, visited, cache, &node, total_rows);
-        // cache.insert(node.clone(), val);
+        let val = dfs(points, visited, &node, total_rows);
+        return val;
+    }
+}
+
+fn dfs_all_timelines(
+    points: &HashSet<Coordinate>,
+    visited: &mut HashSet<Coordinate>,
+    cache: &mut HashMap<Coordinate, u64>,
+    current: &Coordinate,
+    total_rows: usize,
+) -> u64 {
+    if current.r > total_rows {
+        return 1;
+    } else if cache.contains_key(current) {
+        return *cache.get(current).expect("YOU GOTTA BE THEREEEE");
+    } else if points.contains(current) {
+        let (n1, n2) = current.split(); //these are the 2 different timelines
+        let n1_path = dfs_all_timelines(points, visited, cache, &n1, total_rows);
+        let n2_path = dfs_all_timelines(points, visited, cache, &n2, total_rows);
+        cache.insert(n1, n1_path);
+        cache.insert(n2, n2_path);
+        return n1_path + n2_path;
+    } else {
+        let node = current.next();
+        let val = dfs_all_timelines(points, visited, cache, &node, total_rows);
+        cache.insert(node, val);
         return val;
     }
 }
@@ -111,4 +132,7 @@ fn main() {
     let (points, start, total_rows) = parse_file();
     let p1 = part1(&points, &start, total_rows);
     println!("{}", p1);
+
+    let p2 = part2(&points, &start, total_rows);
+    println!("{}", p2);
 }

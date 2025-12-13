@@ -81,7 +81,7 @@ fn part2(lines: &Vec<String>) -> u64 {
     let mut sub_sum: u64 = 0;
 
     for i in iter {
-        println!("{:?}", i);
+        // println!("{:?}", i);
         let mut all_zeros = true;
         for j in &i {
             if j.is_numeric() && *j != '0' {
