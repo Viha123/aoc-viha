@@ -9,7 +9,7 @@ use crate::transpose::{TransposableIter, TransposeIter};
 static FILE_PATH: &str = "input.txt";
 fn parse_input() -> Vec<Vec<String>> {
     let file = File::open(FILE_PATH);
-    let reader = BufReader::new(file.unwrap());
+    let reader = BufReader::new(file.unwrap());  
     let binding = reader
         .lines()
         .collect::<Result<Vec<String>, io::Error>>()
