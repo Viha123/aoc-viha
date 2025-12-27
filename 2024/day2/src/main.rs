@@ -57,7 +57,7 @@ fn check_iter<I: Iterator<Item = i32>>(mut iter: I) -> bool {
             is_increasing = false;
         }
         if !(prev >= curr && diff >= 1 && diff <= 3) {
-            is_decreasing = false;
+            is_decreasing = false;  
         }
         prev = curr
     }

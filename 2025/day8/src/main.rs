@@ -63,9 +63,6 @@ fn calculate_distance(p: &Point, k: &Point) -> f64 {
     let dz = (p.z - k.z) as i64;
     let sum = (dx * dx + dy * dy + dz * dz) as f64;
     sum.sqrt()
-    // let sum: u64 =
-    //     (p.x - k.x).pow(2) as u64 + (p.y - k.y).pow(2) as u64 + (p.z - k.z).pow(2) as u64;
-    // (sum as f64).sqrt()
 }
 fn generate_heap(points: &Vec<Point>, heap: &mut BinaryHeap<Element>, map: &HashMap<Point, usize>) {
     for p in points {
@@ -97,35 +94,57 @@ fn part1(points: &Vec<Point>, iterations: u32) -> u64 {
         // Union the two nodes
         let idx_p = uf.find(popped.p);
         let idx_k = uf.find(popped.k);
-
         if idx_p != idx_k {
             uf.union(idx_p, idx_k);
         }
         conn += 1; // Increment connection count when we actually unite two components
-
-
     }
-    // println!("Uf: {:?}", uf);
+    println!("heap len: {}", heap.len());
     // find biggest union find groups
     let mut counts: HashMap<usize, usize> = HashMap::new();
-    println!("map length: {}", map.len());
     for element in map.values() {
         let num = uf.find(*element);
-        // println!(
-        //     "idx: {}, point: {:?}, group: {}",
-        //     *element, points[*element], num
-        // );
         *counts.entry(num).or_insert(0) += 1;
     }
-    // for element in counts.values() {
-    //     println!("size: {}", element);
-    // }
+
     let mut count_vec: Vec<(&usize, &usize)> = counts.iter().collect();
     count_vec.sort_by(|a, b| b.1.cmp(a.1));
-    println!("len: {}", count_vec.len());
-    // *count_vec[0].1 as u64
-    
+    println!("len: {}", count_vec.len());    
     *count_vec[0].1 as u64 * *count_vec[1].1 as u64 * *count_vec[2].1 as u64
+}
+
+fn part2(points: &Vec<Point>) -> u64 {
+    let mut heap: BinaryHeap<Element> = BinaryHeap::new();
+    let mut map: HashMap<Point, usize> = HashMap::new();
+    let mut uf = QuickUnionUf::<UnionBySize>::new(points.len());
+    (0..points.len()).for_each(|i| {
+        map.insert(points[i].clone(), i);
+    });
+    generate_heap(points, &mut heap, &map);
+    // heap gives you the shortest distances
+    while heap.len() > 0 {
+        let popped = heap.pop().expect("should expect element");
+        let _dup_popped = heap.pop().expect("this should be the duplicated");
+        // Union the two nodes
+        let mut idx_p = uf.find(popped.p);
+        let idx_k = uf.find(popped.k);
+        if idx_p != idx_k {
+            uf.union(idx_p, idx_k);
+        }
+        // check if all are connected
+        let mut is_good = true;
+        idx_p = uf.find(popped.p);
+        for point in points {
+            if idx_p != uf.find(*map.get(point).expect("should exist")) {
+                is_good = false;
+            }
+        }
+        if is_good {
+            return points[popped.p].x as u64 * points[popped.k].x as u64;
+        }
+    }
+    0
+
 }
 fn main() {
     let points = parse_input();
@@ -142,7 +161,12 @@ fn main() {
     //         z: 70637,
     //     },
     // );
-    let ans1 = part1(&points, 1000); //example  10
+    // let ans1 = part1(&points, 10); //example  10
+    let ans2 = part2(&points);
+    // println!("{}", ans1);
+    println!("{}", ans2);
 
-    println!("{}", ans1);
+    // 1865592347 too low
+    // 9259958565
+
 }
