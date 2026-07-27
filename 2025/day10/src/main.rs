@@ -1,13 +1,36 @@
 use regex::{Match, Regex};
+use core::panic;
 use std::any::Any;
+use std::collections::HashMap;
+// use std::collections::Hash
 use std::fs::File;
 use std::io::{self, BufRead, BufReader};
+use std::cmp;
 
 #[derive(Debug)]
 struct LightData {
-    pattern: String,
-    coordinates: Vec<Vec<u32>>,
+    pattern: u32,
+    coordinates: Vec<u32>,
     joltages: Vec<u32>,
+}
+fn turn_coordinate_to_pattern(mut co: Vec<u32>, len: u32) -> u32 {
+    let mut ret : u32 = 1;
+    // [3]
+    // [1, 2, 3]
+    // 1 -> ret << 3 -> 100
+    // 
+    if co.iter().is_sorted() {
+        ret = ret << (len - co[0] -1 );
+        // println!("fist ans: {:#b}", ret);
+        for c in co.iter().skip(1) {
+            ret ^= 1 << (len-c-1);
+            // println!("ans: {:#b}", ret);
+        }
+    } else {
+        panic!("coordinates not sorted")
+    }
+
+    return ret;
 }
 fn parse_input(file_name: &str) -> Vec<LightData> {
     let file = File::open(file_name).expect("failed");
@@ -21,7 +44,7 @@ fn parse_input(file_name: &str) -> Vec<LightData> {
         .lines()
         .filter_map(|line| line.ok())
         .map(|line| {
-            let pattern = pattern_regex
+            let pattern_string = pattern_regex
                 .find(&line)
                 .map(|m| {
                     m.as_str()
@@ -29,7 +52,20 @@ fn parse_input(file_name: &str) -> Vec<LightData> {
                         .to_string()
                 })
                 .unwrap_or_default();
-            let coordinates: Vec<Vec<u32>> = coordinates_regex
+            let mut pattern: u32 = 0;
+            // example : .##. num: 0000000011
+            for pat in pattern_string.chars() {
+                if pat == '.' {
+                    pattern = pattern | 0;
+                }
+                if pat  == '#' {
+                    pattern = pattern | 1;
+                }
+                pattern <<= 1;
+                // println!("pat: {:#b}", pattern);
+            }
+            pattern >>= 1;
+            let coordinates: Vec<u32> = coordinates_regex
                 .find_iter(&line)
                 .map(|m| {
                     numbers_regex
@@ -38,6 +74,9 @@ fn parse_input(file_name: &str) -> Vec<LightData> {
                         .collect()
                 })
                 .filter(|cod: &Vec<u32>| cod.len() > 0)
+                .map(|list| {
+                    turn_coordinate_to_pattern(list, pattern_string.len() as u32)
+                })
                 .collect();
 
             // Extract joltages (from {...})
@@ -60,14 +99,71 @@ fn parse_input(file_name: &str) -> Vec<LightData> {
         .collect()
 }
 
-fn part1(input: &Vec<LightData>) {
-    println!("{:#?}", input);
+fn part1(input: &Vec<LightData>) -> u32 {
+    // start node = 0 we want to use our coordinates to XOR to the final node which is pattern
+    // going to the next step woudl just be xor
+    // reference algorithm cuz I'm stupid https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
+    let mut part1_ans: u32 = 0;
+    for (idx, machine) in input.iter().enumerate() {
+        // implement dijkstra's 
+        let start_node: u32 = 0; // all off
+        let goal: u32 = machine.pattern;
+        // create a set of all unvisited nodes: coordinates
+        // println!("co: {:#?}", machine.coordinates);
+        // create a set of unvisited nodes: machine.coordinates
+        let mut unvisited= machine.coordinates.clone(); // ####make this a set later###
+        let mut visited : Vec<u32>= vec![];
+        let mut distances: HashMap<u32, u32> = HashMap::new();
+        // for co in &machine.coordinates {
+        //     distances.insert(co, 1); // initializing all immediate negihbro
+        // }
+        unvisited.push(start_node);
+        let mut ans = u32::MAX;
+        // Assign to every node a distance from start value
+        // if node doesn't exist in distances, then the distance is infinity
+        distances.insert(start_node, 0);
+        // choose any unvisited node since they are all a equal distance from start_node
+        while unvisited.len() > 0 {
+            let current_node = unvisited.pop().expect("shoudl exist cuz we check for size");
+            visited.push(current_node);
+            // for current node consider all unvisited neighbors and update their distances
+            let mut current_node_neighbors: Vec<u32> = vec![];
+            for node in &unvisited {
+                let unvisited_neighbor = node ^ current_node;
+                if distances.contains_key(&unvisited_neighbor) {
+                    let current_min_distance = distances.get(&unvisited_neighbor).expect("you legit checked if this exists like dude");
+                    distances.insert(unvisited_neighbor, cmp::min(*current_min_distance, distances.get(&current_node).expect("current_node should have a distance") + 1));
+                } else {
+                    distances.insert(unvisited_neighbor, distances.get(&current_node).expect("current_node should have a distance") + 1);
+                }
+                // don't add to unvisited nodes if stuff is already visited
+                if !visited.contains(&unvisited_neighbor) {
+                    current_node_neighbors.push(unvisited_neighbor);
+                }
+                
+            }
+            for n in current_node_neighbors {
+                if !unvisited.contains(&n) {
+                    unvisited.push(n);
+                }
+            }
+            // after current node is done checking all unvisited neighbors don't have to check again
+            if distances.contains_key(&goal) {
+                ans = cmp::min(ans, *distances.get(&goal).expect("genuinely piss off"));
+            }
+        }
+        // for all distances check if goal was visited
+        println!("Finished line idx: {}  ans: {}", idx, ans);
+        part1_ans += ans;
+    }
+    return part1_ans;
+
 }
 fn main() {
-    let data = parse_input("example.txt");
-    part1(&data);
+    let data = parse_input("input.txt");
+    let ans = part1(&data);
 
-    println!("Hello, world!");
+    println!("aans: {}", ans);
 }
 
 #[cfg(test)]
@@ -79,8 +175,24 @@ mod tests {
         let data = parse_input("example.txt");
         // let inp = get_inp(INP.as_bytes());
         // assert_eq!(max_valid_pair(&inp, |_| true), 50);
-        part1(&data);
-        assert_eq!(1, 1);
+        let ans = part1(&data);
+        assert_eq!(ans, 7);
+    }
+
+    #[test]
+    fn coordinate_to_pattern_test() {
+        let c1: Vec<u32> = vec![1, 3, 4];
+        let ans = turn_coordinate_to_pattern(c1, 5);
+        assert_eq!(ans, 0b1011);
+
+        let c2 = vec![3];
+        let ans = turn_coordinate_to_pattern(c2, 4);
+        assert_eq!(ans, 0b1);
+
+        let c3 = vec![0,1];
+        let ans = turn_coordinate_to_pattern(c3, 4);
+        assert_eq!(ans, 0b1100);
+
     }
     #[test]
     fn test_part2() {
