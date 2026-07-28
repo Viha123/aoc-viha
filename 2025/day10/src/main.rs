@@ -1,7 +1,6 @@
-use regex::{Match, Regex};
+use regex::{Regex};
 use core::panic;
-use std::any::Any;
-use std::collections::HashMap;
+use std::collections::{HashMap, VecDeque};
 // use std::collections::Hash
 use std::fs::File;
 use std::io::{self, BufRead, BufReader};
@@ -111,46 +110,41 @@ fn part1(input: &Vec<LightData>) -> u32 {
         // create a set of all unvisited nodes: coordinates
         // println!("co: {:#?}", machine.coordinates);
         // create a set of unvisited nodes: machine.coordinates
-        let mut unvisited= machine.coordinates.clone(); // ####make this a set later###
+        let mut unvisited= VecDeque::from(machine.coordinates.clone()); // ####make this a set later###
         let mut visited : Vec<u32>= vec![];
         let mut distances: HashMap<u32, u32> = HashMap::new();
         // for co in &machine.coordinates {
         //     distances.insert(co, 1); // initializing all immediate negihbro
         // }
-        unvisited.push(start_node);
         let mut ans = u32::MAX;
         // Assign to every node a distance from start value
         // if node doesn't exist in distances, then the distance is infinity
         distances.insert(start_node, 0);
+        let mut current_node = start_node;
         // choose any unvisited node since they are all a equal distance from start_node
         while unvisited.len() > 0 {
-            let current_node = unvisited.pop().expect("shoudl exist cuz we check for size");
             visited.push(current_node);
             // for current node consider all unvisited neighbors and update their distances
-            let mut current_node_neighbors: Vec<u32> = vec![];
-            for node in &unvisited {
+            for node in unvisited.clone() {
                 let unvisited_neighbor = node ^ current_node;
                 if distances.contains_key(&unvisited_neighbor) {
                     let current_min_distance = distances.get(&unvisited_neighbor).expect("you legit checked if this exists like dude");
-                    distances.insert(unvisited_neighbor, cmp::min(*current_min_distance, distances.get(&current_node).expect("current_node should have a distance") + 1));
+                    distances.insert(unvisited_neighbor, cmp::min(*current_min_distance, distances.get(&current_node).expect("current_node should have a distance") + distances.get(&node).or(Some(&1)).expect("msg")));
                 } else {
-                    distances.insert(unvisited_neighbor, distances.get(&current_node).expect("current_node should have a distance") + 1);
+                    distances.insert(unvisited_neighbor, distances.get(&current_node).expect("current_node should have a distance") + distances.get(&node).or(Some(&1)).expect("msg"));
                 }
                 // don't add to unvisited nodes if stuff is already visited
-                if !visited.contains(&unvisited_neighbor) {
-                    current_node_neighbors.push(unvisited_neighbor);
+                if !unvisited.contains(&unvisited_neighbor) && !visited.contains(&unvisited_neighbor) {
+                    unvisited.push_back(unvisited_neighbor);
                 }
                 
-            }
-            for n in current_node_neighbors {
-                if !unvisited.contains(&n) {
-                    unvisited.push(n);
-                }
             }
             // after current node is done checking all unvisited neighbors don't have to check again
             if distances.contains_key(&goal) {
                 ans = cmp::min(ans, *distances.get(&goal).expect("genuinely piss off"));
             }
+            current_node = unvisited.pop_front().expect("shoudl exist cuz we check for size");
+
         }
         // for all distances check if goal was visited
         println!("Finished line idx: {}  ans: {}", idx, ans);
